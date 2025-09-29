@@ -24,8 +24,8 @@ test('complete versioning workflow', function () {
 
     expect($model->versions)->toHaveCount(1);
     $version1 = $model->getCurrentVersion();
-    expect($version1->version_number)->toBe(1);
-    expect($version1->created_by)->toBe((string) $this->user->id);
+    expect($version1->version_number)->toBe(1)
+        ->and($version1->created_by)->toBe((string) $this->user->id);
 
     // Update the model multiple times
     $model->update(['name' => 'Updated Name']);
@@ -39,16 +39,16 @@ test('complete versioning workflow', function () {
 
     // Test version retrieval
     $currentVersion = $model->getCurrentVersion();
-    expect($currentVersion->version_number)->toBe(4);
-    expect($currentVersion->data['name'])->toBe('Updated Name');
-    expect($currentVersion->data['description'])->toBe('Updated Description');
-    expect($currentVersion->data['data'])->toBe(['status' => 'published']);
+    expect($currentVersion->version_number)->toBe(4)
+        ->and($currentVersion->data['name'])->toBe('Updated Name')
+        ->and($currentVersion->data['description'])->toBe('Updated Description')
+        ->and($currentVersion->data['data'])->toBe(['status' => 'published']);
 
     // Test restoration
     $model->restoreToVersion(2, 'Reverting changes');
-    expect($model->versions)->toHaveCount(5);
-    expect($model->name)->toBe('Updated Name');
-    expect($model->description)->toBe('Initial Description');
+    expect($model->versions)->toHaveCount(5)
+        ->and($model->name)->toBe('Updated Name')
+        ->and($model->description)->toBe('Initial Description');
 
     $restoreVersion = $model->getCurrentVersion();
     expect($restoreVersion->comment)->toBe('Reverting changes');
@@ -66,8 +66,8 @@ test('versioning with configuration changes', function () {
 
     // Manually create version
     $model->createVersion('Manual version');
-    expect($model->versions)->toHaveCount(2);
-    expect($model->getCurrentVersion()->comment)->toBe('Manual version');
+    expect($model->versions)->toHaveCount(2)
+        ->and($model->getCurrentVersion()->comment)->toBe('Manual version');
 });
 
 test('versioning with disabled restore versioning', function () {
@@ -89,8 +89,8 @@ test('performance with multiple versions', function () {
         $model->update(['description' => "Version {$i} description"]);
     }
 
-    expect($model->versions)->toHaveCount(51);
-    expect($model->getCurrentVersionNumber())->toBe(51);
+    expect($model->versions)->toHaveCount(51)
+        ->and($model->getCurrentVersionNumber())->toBe(51);
 
     // Test that versions are properly ordered
     $versions = $model->versions;

@@ -20,26 +20,26 @@ test('creates version when model is created', function () {
         'data' => ['key' => 'value'],
     ]);
 
-    expect($model->versions)->toHaveCount(1);
-    expect($model->getCurrentVersionNumber())->toBe(1);
+    expect($model->versions)->toHaveCount(1)
+        ->and($model->getCurrentVersionNumber())->toBe(1);
 
     $version = $model->getCurrentVersion();
-    expect($version->data['name'])->toBe('Test Model');
-    expect($version->data['description'])->toBe('Test Description');
-    expect($version->data['data'])->toBe(['key' => 'value']);
+    expect($version->data['name'])->toBe('Test Model')
+        ->and($version->data['description'])->toBe('Test Description')
+        ->and($version->data['data'])->toBe(['key' => 'value']);
 });
 
 test('creates new version when model is updated', function () {
     $model = TestModel::create(['name' => 'Original Name']);
 
-    expect($model->versions)->toHaveCount(1);
-    expect($model->getCurrentVersionNumber())->toBe(1);
+    expect($model->versions)->toHaveCount(1)
+        ->and($model->getCurrentVersionNumber())->toBe(1);
 
     $model->update(['name' => 'Updated Name']);
 
     $model->refresh();
-    expect($model->versions)->toHaveCount(2);
-    expect($model->getCurrentVersionNumber())->toBe(2);
+    expect($model->versions)->toHaveCount(2)
+        ->and($model->getCurrentVersionNumber())->toBe(2);
 
     $latestVersion = $model->getCurrentVersion();
     expect($latestVersion->data['name'])->toBe('Updated Name');

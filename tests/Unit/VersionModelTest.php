@@ -54,8 +54,8 @@ test('version model uses configured table name', function () {
 test('version model has versionable relationship', function () {
     $version = $this->model->getCurrentVersion();
 
-    expect($version->versionable)->toBeInstanceOf(TestModel::class);
-    expect($version->versionable->id)->toBe($this->model->id);
+    expect($version->versionable)->toBeInstanceOf(TestModel::class)
+        ->and($version->versionable->id)->toBe($this->model->id);
 });
 
 test('version model has creator relationship', function () {
@@ -67,8 +67,8 @@ test('version model has creator relationship', function () {
         'created_by' => $this->user->id,
     ]);
 
-    expect($version->creator)->toBeInstanceOf(User::class);
-    expect($version->creator->id)->toBe($this->user->id);
+    expect($version->creator)->toBeInstanceOf(User::class)
+        ->and($version->creator->id)->toBe($this->user->id);
 });
 
 test('version model creator relationship uses configured user model', function () {
