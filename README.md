@@ -1,8 +1,6 @@
 # Laravel Model Versions
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/act-training/laravel-model-versions.svg?style=flat-square)](https://packagist.org/packages/act-training/laravel-model-versions)
-[![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/act-training/laravel-model-versions/run-tests?label=tests)](https://github.com/act-training/laravel-model-versions/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/workflow/status/act-training/laravel-model-versions/Fix%20PHP%20code%20style%20issues?label=code%20style)](https://github.com/act-training/laravel-model-versions/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/act-training/laravel-model-versions.svg?style=flat-square)](https://packagist.org/packages/act-training/laravel-model-versions)
 
 A Laravel package for automatic model versioning with selective attribute tracking and restore capabilities. Track changes to your Eloquent models with complete version history, restore to previous versions, and maintain a complete audit trail.
