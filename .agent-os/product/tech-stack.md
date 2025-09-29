@@ -1,8 +1,8 @@
 # Technical Stack
 
 ## Core Framework
-- **Application Framework:** Laravel 10.0|11.0|12.0
-- **PHP Version:** PHP 8.2+
+- **Application Framework:** Laravel 12.0+
+- **PHP Version:** PHP 8.4+
 - **Package Type:** Laravel Package with PSR-4 autoloading
 
 ## Database
@@ -30,7 +30,7 @@
 
 ## Development Dependencies
 - **pestphp/pest:** Testing framework
-- **orchestra/testbench:** Laravel package testing
+- **orchestra/testbench:** Laravel 12 package testing
 - **phpunit/phpunit:** Unit testing framework
 
 ## Frontend/JavaScript
