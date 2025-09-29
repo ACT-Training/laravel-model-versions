@@ -5,7 +5,10 @@
       "Bash(vendor/bin/pest:*)",
       "Bash(vendor/bin/phpunit:*)",
       "Bash(php:*)",
-      "Bash(composer update:*)"
+      "Bash(composer update:*)",
+      "Bash(composer show:*)",
+      "Bash(composer info:*)",
+      "Bash(composer why-not:*)"
     ],
     "deny": [],
     "ask": []
