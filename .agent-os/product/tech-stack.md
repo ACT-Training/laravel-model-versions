@@ -2,7 +2,7 @@
 
 ## Core Framework
 - **Application Framework:** Laravel 10.0|11.0|12.0
-- **PHP Version:** PHP 8.1+
+- **PHP Version:** PHP 8.2+
 - **Package Type:** Laravel Package with PSR-4 autoloading
 
 ## Database
