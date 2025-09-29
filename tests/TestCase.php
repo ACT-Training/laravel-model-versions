@@ -13,15 +13,8 @@ class TestCase extends Orchestra
         parent::setUp();
 
         Factory::guessFactoryNamesUsing(
-            fn (string $modelName) => 'ActTraining\\LaravelModelVersions\\Database\\Factories\\'.class_basename($modelName).'Factory'
+            fn (string $modelName) => 'ActTraining\\LaravelModelVersions\\Database\\Factories\\' . class_basename($modelName) . 'Factory'
         );
-    }
-
-    protected function getPackageProviders($app): array
-    {
-        return [
-            LaravelModelVersionsServiceProvider::class,
-        ];
     }
 
     public function getEnvironmentSetUp($app): void
@@ -29,7 +22,7 @@ class TestCase extends Orchestra
         config()->set('database.default', 'testing');
         config()->set('model-versions.user_model', 'ActTraining\\LaravelModelVersions\\Tests\\Support\\User');
 
-        $migration = include __DIR__.'/../database/migrations/2024_01_01_000000_create_versions_table.php';
+        $migration = include __DIR__ . '/../database/migrations/2024_01_01_000000_create_versions_table.php';
         $migration->up();
 
         // Create a users table for testing
@@ -50,5 +43,12 @@ class TestCase extends Orchestra
             $table->string('created_by')->nullable();
             $table->timestamps();
         });
+    }
+
+    protected function getPackageProviders($app): array
+    {
+        return [
+            LaravelModelVersionsServiceProvider::class,
+        ];
     }
 }

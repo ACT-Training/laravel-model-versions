@@ -9,7 +9,7 @@ class LaravelModelVersionsServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->mergeConfigFrom(
-            __DIR__.'/Config/model-versions.php',
+            __DIR__ . '/Config/model-versions.php',
             'model-versions'
         );
     }
@@ -18,15 +18,15 @@ class LaravelModelVersionsServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__.'/Config/model-versions.php' => config_path('model-versions.php'),
+                __DIR__ . '/Config/model-versions.php' => config_path('model-versions.php'),
             ], 'model-versions-config');
 
             $this->publishes([
-                __DIR__.'/../stubs/create_versions_table.php.stub' => $this->getMigrationFileName('create_versions_table.php'),
+                __DIR__ . '/../stubs/create_versions_table.php.stub' => $this->getMigrationFileName('create_versions_table.php'),
             ], 'model-versions-migrations');
         }
 
-        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
     }
 
     protected function getMigrationFileName(string $migrationName): string
