@@ -1,0 +1,42 @@
+name: Run tests
+
+on: [push]
+
+jobs:
+    tests:
+        name: Run tests
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: '8.4'
+                  extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv
+                  coverage: none
+              env:
+                  COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Set up Composer authentication
+              run: composer config http-basic.composer.fluxui.dev "${FLUX_USERNAME}" "${FLUX_LICENSE_KEY}"
+              env:
+                  FLUX_USERNAME: ${{ secrets.FLUX_USERNAME }}
+                  FLUX_LICENSE_KEY: ${{ secrets.FLUX_LICENSE_KEY }}
+
+            - name: Run npm install
+              run: npm install
+
+            - name: Run composer install
+              run: composer install -n --prefer-dist
+
+            - name: Build
+              run: npm run build
+
+            - name: Prepare Laravel Application
+              run: |
+                  cp .env.example .env
+                  php artisan key:generate
+
+            - name: Run tests
+              run: php artisan test --parallel --stop-on-failure
