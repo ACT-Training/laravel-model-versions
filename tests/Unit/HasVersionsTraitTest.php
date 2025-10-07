@@ -54,9 +54,9 @@ test('can retrieve specific version', function () {
     $version2 = $model->getVersion(2);
     $version3 = $model->getVersion(3);
 
-    expect($version1->data['name'])->toBe('Version 1');
-    expect($version2->data['name'])->toBe('Version 2');
-    expect($version3->data['name'])->toBe('Version 3');
+    expect($version1->data['name'])->toBe('Version 1')
+        ->and($version2->data['name'])->toBe('Version 2')
+        ->and($version3->data['name'])->toBe('Version 3');
 });
 
 test('can get version data without version model', function () {
@@ -66,8 +66,8 @@ test('can get version data without version model', function () {
     $version1Data = $model->getVersionData(1);
     $version2Data = $model->getVersionData(2);
 
-    expect($version1Data['name'])->toBe('Test Model');
-    expect($version2Data['name'])->toBe('Updated Model');
+    expect($version1Data['name'])->toBe('Test Model')
+        ->and($version2Data['name'])->toBe('Updated Model');
 });
 
 test('can restore to previous version', function () {
@@ -75,15 +75,15 @@ test('can restore to previous version', function () {
     $model->update(['name' => 'Updated', 'description' => 'Updated desc']);
     $model->update(['name' => 'Final', 'description' => 'Final desc']);
 
-    expect($model->name)->toBe('Final');
-    expect($model->description)->toBe('Final desc');
+    expect($model->name)->toBe('Final')
+        ->and($model->description)->toBe('Final desc');
 
     $restored = $model->restoreToVersion(1);
 
     expect($restored)->toBeTrue();
     $model->refresh();
-    expect($model->name)->toBe('Original');
-    expect($model->description)->toBe('Original desc');
+    expect($model->name)->toBe('Original')
+        ->and($model->description)->toBe('Original desc');
 });
 
 test('creates version when restoring by default', function () {
@@ -116,8 +116,8 @@ test('can disable versioning temporarily', function () {
         $model->update(['name' => 'Updated']);
     });
 
-    expect($model->versions)->toHaveCount(1);
-    expect($model->name)->toBe('Updated');
+    expect($model->versions)->toHaveCount(1)
+        ->and($model->name)->toBe('Updated');
 });
 
 test('versions are ordered by version number descending', function () {
@@ -157,10 +157,10 @@ test('only creates version when versionable attributes change with nonVersionabl
 
     expect($model->versions)->toHaveCount(1);
     $initialVersionData = $model->getCurrentVersion()->data;
-    expect($initialVersionData)->toHaveKey('name');
-    expect($initialVersionData)->toHaveKey('data');
-    expect($initialVersionData)->not->toHaveKey('description');
-    expect($initialVersionData)->not->toHaveKey('is_active');
+    expect($initialVersionData)->toHaveKey('name')
+        ->and($initialVersionData)->toHaveKey('data')
+        ->and($initialVersionData)->not->toHaveKey('description')
+        ->and($initialVersionData)->not->toHaveKey('is_active');
 
     // Update non-versionable attribute - should not create new version
     $model->update(['description' => 'Updated Description']);
@@ -184,10 +184,10 @@ test('only versions specified attributes with versionableAttributes', function (
 
     expect($model->versions)->toHaveCount(1);
     $initialVersionData = $model->getCurrentVersion()->data;
-    expect($initialVersionData)->toHaveKey('name');
-    expect($initialVersionData)->toHaveKey('data');
-    expect($initialVersionData)->not->toHaveKey('description');
-    expect($initialVersionData)->not->toHaveKey('is_active');
+    expect($initialVersionData)->toHaveKey('name')
+        ->and($initialVersionData)->toHaveKey('data')
+        ->and($initialVersionData)->not->toHaveKey('description')
+        ->and($initialVersionData)->not->toHaveKey('is_active');
 
     // Update non-versionable attributes - should not create new version
     $model->update(['description' => 'Updated Description', 'is_active' => false]);
@@ -200,9 +200,9 @@ test('only versions specified attributes with versionableAttributes', function (
     expect($model->versions)->toHaveCount(2);
 
     $latestVersionData = $model->getCurrentVersion()->data;
-    expect($latestVersionData['data'])->toBe(['key' => 'updated_value']);
-    expect($latestVersionData)->not->toHaveKey('description');
-    expect($latestVersionData)->not->toHaveKey('is_active');
+    expect($latestVersionData['data'])->toBe(['key' => 'updated_value'])
+        ->and($latestVersionData)->not->toHaveKey('description')
+        ->and($latestVersionData)->not->toHaveKey('is_active');
 });
 
 test('hasVersionableChanges works correctly', function () {
@@ -228,8 +228,8 @@ test('can create version with custom comment', function () {
 
     $version = $model->createVersion('Custom comment');
 
-    expect($version->comment)->toBe('Custom comment');
-    expect($model->versions)->toHaveCount(2); // Initial + manual
+    expect($version->comment)->toBe('Custom comment')
+        ->and($model->versions)->toHaveCount(2); // Initial + manual
 });
 
 test('restoreToVersion accepts custom comment', function () {
@@ -240,4 +240,47 @@ test('restoreToVersion accepts custom comment', function () {
 
     $restoreVersion = $model->getCurrentVersion();
     expect($restoreVersion->comment)->toBe('Manual restore');
+});
+
+test('flattenVersions deletes all but latest version', function () {
+    $model = TestModel::create(['name' => 'Version 1']);
+    $model->update(['name' => 'Version 2']);
+    $model->update(['name' => 'Version 3']);
+    $model->update(['name' => 'Version 4']);
+
+    expect($model->versions)->toHaveCount(4);
+
+    $deleted = $model->flattenVersions();
+
+    expect($deleted)->toBe(3);
+    $model->refresh();
+    expect($model->versions)->toHaveCount(1)
+        ->and($model->getCurrentVersion()->version_number)->toBe(4)
+        ->and($model->getCurrentVersion()->data['name'])->toBe('Version 4');
+});
+
+test('flattenVersions returns zero when only one version exists', function () {
+    $model = TestModel::create(['name' => 'Only Version']);
+
+    expect($model->versions)->toHaveCount(1);
+
+    $deleted = $model->flattenVersions();
+
+    expect($deleted)->toBe(0)
+        ->and($model->versions)->toHaveCount(1);
+});
+
+test('flattenVersions returns zero when no versions exist', function () {
+    $model = TestModel::make(['name' => 'Test']);
+
+    $model->withoutVersioning(function () use ($model) {
+        $model->save();
+    });
+
+    expect($model->versions)->toHaveCount(0);
+
+    $deleted = $model->flattenVersions();
+
+    expect($deleted)->toBe(0)
+        ->and($model->versions)->toHaveCount(0);
 });
