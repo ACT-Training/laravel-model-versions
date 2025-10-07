@@ -106,6 +106,36 @@ trait HasVersions
         return true;
     }
 
+    public function flattenVersions(): int
+    {
+        $versionModel = config('model-versions.version_model', Version::class);
+
+        // Get all versions ordered by version number ascending
+        $versions = $versionModel::where('versionable_type', get_class($this))
+            ->where('versionable_id', $this->id)
+            ->orderBy('version_number', 'asc')
+            ->get();
+
+        if ($versions->count() <= 1) {
+            return 0;
+        }
+
+        // Keep the latest version, delete all others
+        $toDelete = $versions->slice(0, -1)->pluck('id')->toArray();
+
+        if (empty($toDelete)) {
+            return 0;
+        }
+
+        // Delete the versions
+        $deleted = $versionModel::whereIn('id', $toDelete)->delete();
+
+        // Refresh the relationship
+        $this->unsetRelation('versions');
+
+        return $deleted;
+    }
+
     public function withoutVersioning(callable $callback): mixed
     {
         $this->versioningDisabled = true;

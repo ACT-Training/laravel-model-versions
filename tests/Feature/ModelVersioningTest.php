@@ -29,12 +29,15 @@ test('complete versioning workflow', function () {
 
     // Update the model multiple times
     $model->update(['name' => 'Updated Name']);
+    $model->refresh();
     expect($model->versions)->toHaveCount(2);
 
     $model->update(['description' => 'Updated Description']);
+    $model->refresh();
     expect($model->versions)->toHaveCount(3);
 
     $model->update(['data' => ['status' => 'published']]);
+    $model->refresh();
     expect($model->versions)->toHaveCount(4);
 
     // Test version retrieval
@@ -62,10 +65,12 @@ test('versioning with configuration changes', function () {
     expect($model->versions)->toHaveCount(1);
 
     $model->update(['name' => 'Updated']);
+    $model->refresh();
     expect($model->versions)->toHaveCount(1); // No new version created
 
     // Manually create version
     $model->createVersion('Manual version');
+    $model->refresh();
     expect($model->versions)->toHaveCount(2)
         ->and($model->getCurrentVersion()->comment)->toBe('Manual version');
 });
@@ -75,9 +80,11 @@ test('versioning with disabled restore versioning', function () {
 
     $model = TestModel::create(['name' => 'Original']);
     $model->update(['name' => 'Updated']);
+    $model->refresh();
     expect($model->versions)->toHaveCount(2);
 
     $model->restoreToVersion(1);
+    $model->refresh();
     expect($model->versions)->toHaveCount(2); // No new version created on restore
 });
 
@@ -95,11 +102,10 @@ test('performance with multiple versions', function () {
     // Test that versions are properly ordered
     $versions = $model->versions;
     $versionNumbers = $versions->pluck('version_number')->toArray();
-    expect($versionNumbers)->toBe(range(51, 1));
-
-    // Test specific version retrieval
     $version25 = $model->getVersion(25);
-    expect($version25->data['description'])->toBe('Version 24 description');
+
+    expect($versionNumbers)->toBe(range(51, 1))
+        ->and($version25->data['description'])->toBe('Version 24 description');
 });
 
 test('versioning without authentication', function () {
@@ -145,5 +151,6 @@ test('complex data versioning', function () {
 
     // Restore to previous version
     $model->restoreToVersion(1);
+    $model->refresh();
     expect($model->data['settings']['theme'])->toBe('dark');
 });

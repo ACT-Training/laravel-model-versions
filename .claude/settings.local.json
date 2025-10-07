@@ -9,7 +9,8 @@
       "Bash(composer show:*)",
       "Bash(composer info:*)",
       "Bash(composer why-not:*)",
-      "Bash(vendor/bin/duster fix:*)"
+      "Bash(vendor/bin/duster fix:*)",
+      "Bash(git checkout:*)"
     ],
     "deny": [],
     "ask": []
